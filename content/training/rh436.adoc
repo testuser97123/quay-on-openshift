@@ -1,0 +1,33 @@
+= Red Hat High Availability Clustering (RH436)
+
+*Course description*
+
+Design and deploy a high availability cluster
+
+Red Hat(R) High Availability Clustering (RH436) provides intensive, hands-on experience with the Pacemaker component of the Red Hat Enterprise Linux High-Availability Add-On, as well as cluster storage components from the Resilient Storage Add-On, including Cluster Logical Volume Manager (CLVM), Red Hat Global File System 2 (GFS2), and Device-Mapper Multipath.
+
+This course is based on Red Hat Enterprise Linux 7.1.
+
+Created for senior Linux(R) system administrators, this 4-day course strongly emphasizes lab-based activities. You'll learn how to deploy and manage shared storage and server clusters that provide highly available network services to a mission-critical enterprise environment.
+
+This course also helps you prepare for the Red Hat Certified Specialist in High Availability Clustering exam (EX436).
+
+*Course content summary*
+
+* Install and configure a Pacemaker-based high availability cluster
+* Create and manage highly available services
+* Troubleshoot common cluster issues
+* Work with shared storage (iSCSI) and configure multipathing
+* Configure GFS2 file systems
+
+*Audience for this course*
+
+* Senior Linux system administrators responsible for maximizing resiliency through high-availability clustering services and using fault-tolerant shared storage technologies
+
+*Prerequisites for this course*
+
+* If you want to take this course without the exam (RH436) and have not earned your RHCE(R) certification, you can confirm that you have the necessary knowledge by passing the online skills assessment.
+
+
+For full details, or to enroll: +
+https://www.redhat.com/en/services/training/rh436-red-hat-high-availability-clustering

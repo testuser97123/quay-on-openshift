@@ -1,0 +1,6 @@
+All OpenShift environments for on prem environments will utilize hardware to achieve some level of redundancy.  Each master and infrastructure component (EFK, metrics, router, and registry) should reside on different physical hardware.  The image below illustrates a simple cluster example.
+
+.Cluster Diagram
+image::OpenShift-4x-VMware/ocp-4-cluster-diagrams-on-prem.png[pdfwidth=99%,width=99%]
+
+//TODO: Add description about the architecture diagram

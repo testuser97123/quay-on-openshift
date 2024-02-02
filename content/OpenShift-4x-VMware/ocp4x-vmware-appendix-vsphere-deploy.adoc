@@ -1,0 +1,459 @@
+
+The procedure used to deploy the OpenShift cluster on vSphere is a subset of the documentation found online at: +
+
+https://access.redhat.com/documentation/en-us/openshift_container_platform/{ocp_version}/html/installing_on_vsphere/index +
+And +
+https://cloud.redhat.com/openshift/install/vsphere/user-provisioned
+
+
+In order to deploy OpenShift on vSphere, the following steps needs to be performed.
+
+= Generate SSH key
+https://access.redhat.com/documentation/en-us/openshift_container_platform/{ocp_version}/html-single/installing_on_vsphere/index#ssh-agent-using_installing-vsphere[See: Generating an SSH private key]
+
+The specific command used for this engagement:
+----
+ssh-keygen -t rsa -b 2048 -f ~/.ssh/id_rsa
+----
+
+= Download Binaries
+https://access.redhat.com/documentation/en-us/openshift_container_platform/{ocp_version}/html-single/installing_on_vsphere/index#installation-obtaining-installer_installing-vsphere[See: Obtaining the installation program] +
+And +
+https://access.redhat.com/documentation/en-us/openshift_container_platform/{ocp_version}/html-single/installing_on_vsphere/index#cli-installing-cli_installing-vsphere[See: Installing the CLI]
+
+The specific commands used for this engagement:
+----
+mkdir ~/bin
+
+OCP4_BASEURL=https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest
+LATEST_VERSION=$(curl -s ${OCP4_BASEURL}/release.txt | grep 'Version: ' | awk '{print $2}')
+curl -s ${OCP4_BASEURL}/openshift-client-linux-$LATEST_VERSION.tar.gz | tar -xzf - -C ~/bin oc kubectl
+curl -s ${OCP4_BASEURL}/openshift-install-linux-$LATEST_VERSION.tar.gz | tar -xzf - -C ~/bin/ openshift-install
+----
+
+= Pull Secret
+Pull secrets are specific each Red Hat account, so the customer was directed to log in to cloud.redhat.com and obtain a pull secret from the appropriate link at: +
+https://cloud.redhat.com/openshift/install/vsphere/user-provisioned.
+
+For this engagement the pull secret was stored in the file ```~/ocp4_pull_secret```
+
+= Creating the Install Configuration File
+https://access.redhat.com/documentation/en-us/openshift_container_platform/{ocp_version}/html-single/installing_on_vsphere/index#installation-initializing-manual_installing-vsphere[See: Manually creating the installation configuration file]
+
+The installation configuration file was created using the following contents:
+----
+<replace values shown in this example with the actual values used>
+
+mkdir ~/ocp4
+cd ~/ocp4
+
+export DOMAIN=rhbr-labs.com <1>
+export CLUSTERID=ocp <2>
+export VCENTER_SERVER=vcsa.rhbr-labs.com <3>
+export VCENTER_USER="administrator@vsphere.local" <4>
+export VCENTER_PASS='<admin_password>' <4>
+export VCENTER_DC='rhbr-labs-dc' <5>
+export VCENTER_DS='<datastore-id>' <6>
+export PULL_SECRET=$(cat ~/ocp4_pull_secret) <7>
+export OCP_SSH_KEY=$(cat ~/.ssh/id_rsa.pub) <8>
+
+cat <<EOF > install-config.yaml
+apiVersion: v1
+baseDomain: ${DOMAIN}
+compute:
+- hyperthreading: Enabled
+  name: worker
+  replicas: 1
+controlPlane:
+  hyperthreading: Enabled
+  name: master
+  replicas: 1
+metadata:
+  name: ${CLUSTERID}
+networking:
+  clusterNetworks:
+  - cidr: 10.254.0.0/16 <9>
+    hostPrefix: 24
+  networkType: OpenShiftSDN
+  serviceNetwork:
+  - 172.30.0.0/16 <10>
+platform:
+  vsphere:
+    vcenter: ${VCENTER_SERVER}
+    username: ${VCENTER_USER}
+    password: ${VCENTER_PASS}
+    datacenter: ${VCENTER_DC}
+    defaultDatastore: ${VCENTER_DS}
+pullSecret: '${PULL_SECRET}'
+sshKey: '${OCP_SSH_KEY}'
+EOF
+----
+
+<1> The base domain of the cluster. All DNS records must be sub-domains of this base and include the cluster name.
+<2> The cluster name that you specified in your DNS records.
+<3> The fully-qualified host name or IP address of the vCenter server.
+<4> vCenter credentials. This user must have at least the roles and privileges that are required for [dynamic persistent volume provisioning](https://vmware.github.io/vsphere-storage-for-kubernetes/documentation/vcp-roles.html) in vSphere.
+<5> The vSphere Datacenter.
+<6> Default Datastore to use.
+<7> Pull secret obtained in cloud.redhat.com.
+<8> The public portion of the default SSH key for the core user in Red Hat Enterprise Linux CoreOS (RHCOS).
+<9> Change this field if it is required to use a different cluster network range than the default one.
+<10> Change this field if it is required to use a different service network range than the default one.
+
+WARNING: The installer will automatically delete the ```install-config.yml``` file when it is executed. It is strongly recommended that a backup be created prior to moving to the next step to avoid the need to re-create the file in the event it needs to be used again.
+
+A backup of the installation file was created with the following command
+----
+cp install-config.yaml ../install-config.yaml.bkp
+----
+
+= Create Manifests and Ignition Configuration
+https://access.redhat.com/documentation/en-us/openshift_container_platform/{ocp_version}/html-single/installing_on_vsphere/index#installation-user-infra-generate-k8s-manifest-ignition_installing-vsphere[See: Creating the Kubernetes manifest and Ignition config files]
+
+The specific command used for this engagement (manifests are created in the current directory):
+----
+openshift-install create manifests
+----
+
+To ensure that masters are not schedulable the following command was used to modify the generated manifest files:
+----
+sed -i 's/mastersSchedulable: true/mastersSchedulable: false/g' manifests/cluster-scheduler-02-config.yml
+----
+
+The Ignition configuration was created using the following commands:
+----
+openshift-install create ignition-configs
+
+cat <<EOF > append-bootstrap.ign
+{
+  "ignition": {
+    "config": {
+      "append": [
+        {
+          "source": "http://WEBSERVERIP:8080/ocp/ignition/bootstrap.ign",
+          "verification": {}
+        }
+      ]
+    },
+    "timeouts": {},
+    "version": "2.1.0"
+  },
+  "networkd": {},
+  "passwd": {},
+  "storage": {},
+  "systemd": {}
+}
+EOF
+----
+
+= Creating the Virtual Machines on vSphere
+https://access.redhat.com/documentation/en-us/openshift_container_platform/{ocp_version}/html-single/installing_on_vsphere/index#installation-vsphere-machines_installing-vsphere[See: Creating Red Hat Enterprise Linux CoreOS (RHCOS) Machines in vSphere]
+
+
+The specific commands used for this engagement to copy ```bootstrap.ign``` to the webserver:
+----
+sudo mkdir -p /var/www/html/ocp/ignition/
+sudo cp bootstrap.ign /var/www/html/ocp/ignition/
+----
+
+This command confirms that webserver is hosting the bootstrap ignition file and that it is accessible:
+----
+curl http://WEBSERVERIP:8080/ocp/ignition/bootstrap.ign
+----
+
+This command was used to generate files in base64:
+----
+for i in append-bootstrap master worker
+do
+base64 -w0 < $i.ign > $i.64
+done
+----
+
+== Import OVA with vSphere
+
+Access the vCenter web UI: +
+<replace this with the actual vCenter web URL>
+https://customer.vcenter.url.com
+
+[NOTE]
+====
+You will need to connect to vSphere using credentials with privileges to create/upload templates to the target datacenter.
+====
+
+Click the icon resembling a stack of paper to navigate to “VMs and Templates”.
+
+From there right click on your datacenter and select "*New Folder → New VM and Template Folder*".
+
+Name this new folder the name of your cluster id: {ocp_cluster1_name}
+
+.Creating Folder
+image::OpenShift-4x-VMware//01-vcenter-create-folder.png[pdfwidth=50%,width=50%]
+
+Import the OVA by right clicking the folder and selecting “*Deploy OVF Template*”.
+
+.Deploying OVA
+image::OpenShift-4x-VMware//02-vcenter-deploy-ova.png[pdfwidth=50%,width=50%]
+
+Add the url to RHCOS OVA (https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/{ocp_version}/latest/[see here]) and click "*NEXT*":
+
+.Deploying OVA
+image::OpenShift-4x-VMware//03-vcenter-ova-url.png[pdfwidth=50%,width=50%]
+
+Select the folder you created in the previous step and click "*NEXT*":
+
+.Deploying OVA
+image::OpenShift-4x-VMware//04-vcenter-ova-folder.png[pdfwidth=50%,width=50%]
+
+Select the compute resource and click "*NEXT*":
+
+.Deploying OVA
+image::OpenShift-4x-VMware//05-vcenter-ova-compute.png[pdfwidth=50%,width=50%]
+
+Select the datastore specified in the installation config file earlier:
+
+.Deploying OVA
+image::OpenShift-4x-VMware//06-vcenter-ova-storage.png[pdfwidth=50%,width=50%]
+
+Select the network and click "*NEXT*":
+
+.Deploying OVA
+image::OpenShift-4x-VMware//07-vcenter-ova-network.png[pdfwidth=50%,width=50%]
+
+Don't fill anything yet (these parameters will be filled further). Click "*NEXT*".
+
+.Deploying OVA
+image::OpenShift-4x-VMware//08-vcenter-ova-template.png[pdfwidth=50%,width=50%]
+
+Click "*FINISH*" in the next screen
+
+.Deploying OVA
+image::OpenShift-4x-VMware//09-vcenter-ova-finish.png[pdfwidth=50%,width=50%]
+
+WARNING: *NEVER start up the template itself*. The ignition process only runs on first boot, so booting the template would cause ignition files provided afterward to be ignored.
+
+
+= Provision OpenShift Servers
+
+Right click on the OVA and select *Clone -> Clone to Virtual Machine*
+
+.Clone to VM
+image::OpenShift-4x-VMware//10-vcenter-clone-menu.png[pdfwidth=50%,width=50%]
+
+Select the folder you created before, input the VM name and click "*NEXT*".
+[NOTE]
+====
+The VM name must match the name configured in DHCP and DNS.
+====
+
+[subs=attributes+]
+----
+Folder: {ocp_cluster1_name}
+VM Name: bootstrap-0
+----
+
+.Clone to VM
+image::OpenShift-4x-VMware//11-vcenter-clone-folder.png[pdfwidth=50%,width=50%]
+
+Select the compute resource and click "*NEXT*":
+
+.Clone to VM
+image::OpenShift-4x-VMware//12-vcenter-clone-compute.png[pdfwidth=50%,width=50%]
+
+Select the datastore and select disk format as "*Thin Provision*":
+
+.Clone to VM
+image::OpenShift-4x-VMware//13-vcenter-clone-datastore.png[pdfwidth=50%,width=50%]
+
+Enable the option "*Customize this virtual machine's hardware*"
+
+.Clone to VM
+image::OpenShift-4x-VMware//14-vcenter-clone-customize-1.png[pdfwidth=50%,width=50%]
+
+In the next screen input the following parameters:
+
+[subs=attributes+]
+----
+CPU: {ocp_bootstrap_cpu}
+Memory: {ocp_bootstrap_memory}
+- Enable "Reserve all guest memory" option
+Hard Disk: {ocp_bootstrap_disk}
+Network Adapter 1:
+- MAC Address: Manual - <MAC ADDRESS RESERVED IN DHCP>
+----
+
+.Clone to VM
+image::OpenShift-4x-VMware//15-vcenter-clone-customize-2.png[pdfwidth=50%]
+
+Click in "*VM Options*" tab and expand "*Advanced*" accordion:
+
+.Clone to VM
+image::OpenShift-4x-VMware//16-vcenter-clone-advanced.png[pdfwidth=50%]
+
+In *"Latency Sensitivity"* select High and click in "*Edit Configuration...*" button.
+
+Click in the "*ADD CONFIGURATION PARAMS*" button and add the following parameters:
+
+----
+guestinfo.ignition.config.data=<content of append_bootstrap.64 file>
+guestinfo.ignition.config.data.encoding=base64
+disk.EnableUUID=TRUE
+----
+
+If using static IP addresses and if {ocp_version} >= 4.6 set the following parameter before booting the VM:
+----
+guestinfo.afterburn.initrd.network-kargs=ip=<ipcfg>
+----
+https://docs.openshift.com/container-platform/4.6/release_notes/ocp-4-6-release-notes.html#ocp-4-6-static-ip-config-with-ova[See: Static IP configuration for vSphere using OVA]
+
+[NOTE]
+====
+If using static IPs the parameter afterburn.initrd.network-kargs only applies to the first boot.
+====
+
+.Clone to VM
+image::OpenShift-4x-VMware//17-vcenter-clone-conf-params.png[pdfwidth=50%]
+
+Click "*NEXT*" then "*FINISH*" to create the bootstrap machine.
+
+.Clone to VM
+image::OpenShift-4x-VMware//18-vcenter-clone-finish.png[pdfwidth=50%]
+
+*Repeat the process above to deploy each of the following VMs using the values from this table:*
+
+[cols="3,2,2,2,5",options=header]
+|===
+|MACHINE
+|vCPU
+|RAM
+|STORAGE
+|guestinfo.ignition.config.data
+
+|master-0
+|{ocp_cluster1_master_cpu}
+|{ocp_cluster1_master_memory}
+|{ocp_cluster1_master_disk}
+|Output of: cat master.64
+
+|master-1
+|{ocp_cluster1_master_cpu}
+|{ocp_cluster1_master_memory}
+|{ocp_cluster1_master_disk}
+|Output of: cat master.64
+
+|master-2
+|{ocp_cluster1_master_cpu}
+|{ocp_cluster1_master_memory}
+|{ocp_cluster1_master_disk}
+|Output of: cat master.64
+
+|worker-0
+|{ocp_cluster1_worker_cpu}
+|{ocp_cluster1_worker_memory}
+|{ocp_cluster1_worker_disk}
+|Output of: cat worker.64
+
+|worker-1
+|{ocp_cluster1_worker_cpu}
+|{ocp_cluster1_worker_memory}
+|{ocp_cluster1_worker_disk}
+|Output of: cat worker.64
+
+|===
+
+*Once all of the VMs have been deployed, start them up.*
+
+
+= The Installation Process
+https://access.redhat.com/documentation/en-us/openshift_container_platform/{ocp_version}/html-single/installing_on_vsphere/index#installation-installing-bare-metal_installing-vsphere[See: Creating the cluster] +
+
+The following command was used to install OpenShift with the configuration file created earlier:
+----
+[user0@infra-services ocp]$ openshift-install wait-for bootstrap-complete --log-level debug
+DEBUG OpenShift Installer v4.2.0
+DEBUG Built from commit 90ccb37ac1f85ae811c50a29f9bb7e779c5045fb
+INFO Waiting up to 30m0s for the Kubernetes API at https://api.ocp.rhbr-labs.com:6443...
+INFO API v1.14.6+2e5ed54 up
+INFO Waiting up to 30m0s for bootstrapping to complete...
+DEBUG Bootstrap status: complete
+INFO It is now safe to remove the bootstrap resources
+----
+
+After "INFO" message about removing bootstrap resources is displayed, the bootstrap VM and its associated disk can be shut down and removed from vSphere.
+
+The process can take up to 20 minutes. If this message is not displayed within that timeframe, see the troubleshooting tips here: link:troubleshooting.adoc[]!
+
+After bootstrap completion, the following command was used to verify the installation:
+----
+openshift-install wait-for install-complete --log-level debug
+----
+
+The output of the command:
+----
+<Replace this example output with the actual output from the customer environment>
+
+DEBUG OpenShift Installer v4.2.10
+DEBUG Built from commit 6ed04f65b0f6a1e11f10afe658465ba8195ac459
+INFO Waiting up to 30m0s for the cluster at https://api.ocp.rhbr-labs.com:6443 to initialize...
+DEBUG Still waiting for the cluster to initialize: Working towards 4.2.10: 99% complete, waiting on authentication, console, image-registry
+DEBUG Still waiting for the cluster to initialize: Working towards 4.2.10: 99% complete, waiting on authentication, console, image-registry
+DEBUG Still waiting for the cluster to initialize: Working towards 4.2.10: 100% complete
+DEBUG Cluster is initialized
+INFO Waiting up to 10m0s for the openshift-console route to be created...
+DEBUG Route found in openshift-console namespace: console
+DEBUG Route found in openshift-console namespace: downloads
+DEBUG OpenShift console route is created
+INFO Install complete!
+INFO To access the cluster as the system:admin user when using 'oc', run 'export KUBECONFIG=/home/user0/ocp/auth/kubeconfig'
+INFO Access the OpenShift web-console here: https://console-openshift-console.apps.ocp.rhbr-labs.com
+INFO Login to the console with user: kubeadmin, password: YsviS-yGfBx-t6FsV-BZ58B
+----
+
+
+= Running oc Commands
+https://access.redhat.com/documentation/en-us/openshift_container_platform/{ocp_version}/html-single/installing_on_vsphere/index#cli-logging-in-kubeadmin_installing-vsphere[See: Logging in to the cluster]
+
+The following command will copy the Kubernetes configuration to the logged-in user's profile and allow the use of the "*oc*" command on the newly deployed cluster:
+----
+mkdir ~/.kube/
+cp auth/kubeconfig ~/.kube/config
+----
+
+= Cluster Operators Deployment
+https://access.redhat.com/documentation/en-us/openshift_container_platform/{ocp_version}/html-single/installing_on_vsphere/index#installation-operators-config_installing-vsphere[See: Initial Operator configuration]
+
+Many operators are deployed as part of the installation process.
+
+The query below shows the operators deployed by the installation process for this engagement:
+----
+<replace this example with actual output from the customer's environment>
+
+[user0@infra-services ocp]$ watch -n 10 'oc get clusteroperators'
+Every 10.0s: oc get clusteroperators                                                                                                                                                                                                infra-services.rhbr-labs.com: Mon Dec 16 20:43:44 2019
+
+NAME                                       VERSION   AVAILABLE   PROGRESSING   DEGRADED   SINCE
+authentication                                       Unknown     Unknown       True	  3m1s
+cloud-credential                           4.2.10    True        False         False	  6m54s
+console                                    4.2.10    Unknown     True          False	  11s
+dns                                        4.2.10    True        False         False	  6m20s
+image-registry                                       False	 False         True	  11s
+ingress                                    unknown   False	 True          False	  11s
+insights                                   4.2.10    True        False         False	  6m53s
+kube-apiserver                             4.2.10    True        False         False	  4m24s
+kube-controller-manager                    4.2.10    True        False         False	  4m18s
+kube-scheduler                             4.2.10    True        False         False	  4m16s
+machine-api                                4.2.10    True        False         False	  6m56s
+machine-config                             4.2.10    True        False         False	  6m18s
+marketplace                                          False	 True          False	  12s
+monitoring                                           Unknown     True          Unknown    14s
+network                                    4.2.10    True        False         False	  5m57s
+node-tuning                                4.2.10    True        False         False	  2m50s
+openshift-apiserver                        4.2.10    True        False         False	  2m9s
+openshift-controller-manager               4.2.10    True        False         False	  3m7s
+openshift-samples                                    False	 False                    9s
+operator-lifecycle-manager                 4.2.10    True        False         False	  5m52s
+operator-lifecycle-manager-catalog         4.2.10    True        False         False	  5m52s
+operator-lifecycle-manager-packageserver   4.2.10    True        False         False	  3m7s
+service-ca                                 4.2.10    True        False         False	  6m46s
+service-catalog-apiserver                  4.2.10    True        False         False	  2m57s
+service-catalog-controller-manager         4.2.10    True        False         False	  3m
+----

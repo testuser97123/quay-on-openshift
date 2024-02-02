@@ -1,0 +1,88 @@
+The point of this section is to configure additional tools that is included with OpenShift. The following actions were performed based on the related documentation:
+
+[options="header"]
+|===
+| Section | Configuration | Documentation
+
+// TODO: In an IPI deployment usually the persistent volume is configured automatically by the installer, below lines are here only for reference. Remove if not needed.
+|Registry Configuration
+|Set persistent volume and node selector
+|https://access.redhat.com/documentation/en-us/openshift_container_platform/{ocp_version}/html/registry/setting-up-and-configuring-the-registry#configuring-registry-storage-vsphere[Configuring the registry for vSphere]
+
+// TODO: Here change the reference based on the auth methods that have been configured for the customer.
+|Authentication
+|Set authentication method to HTTPD
+|https://access.redhat.com/documentation/en-us/openshift_container_platform/{ocp_version}/html/authentication/configuring-identity-providers#configuring-htpasswd-identity-provider[Configuring an HTPasswd identity provider]
+
+|Logging Deployment and Configuration
+|Deployment and configuration of Logging stack (EFK)
+|https://access.redhat.com/documentation/en-us/openshift_container_platform/{ocp_version}/html/logging/cluster-logging-deploying[Deploying Cluster Logging] +
+https://access.redhat.com/documentation/en-us/openshift_container_platform/{ocp_version}/html/logging/cluster-logging-moving[Moving the cluster logging resources with node selectors]
+
+|Monitoring Configuration
+|Set persistent volume and node selector
+|https://access.redhat.com/documentation/en-us/openshift_container_platform/{ocp_version}/html/monitoring/cluster-monitoring#configuring-persistent-storage[Configuring persistent storage] +
+https://access.redhat.com/documentation/en-us/openshift_container_platform/{ocp_version}/html/monitoring/cluster-monitoring#moving-monitoring-components-to-different-nodes_configuring-monitoring[Moving monitoring components to different nodes]
+
+
+|===
+
+= Registry Configuration
+
+// TODO: In an IPI deployment usually the persistent volume is configured automatically by the installer, below lines are here only for reference. Remove if not needed.
+Set registry persistent volume:
+
+#TODO#
+
+= Authentication
+
+////
+TODO: This is just an example. Change based on the auth methods that have been configured for the customer.
+//// 
+Set authentication with httpd.
+
+----
+sudo yum install httpd-tools
+htpasswd -c -B -b users.htpasswd admin 'r3dh4t1!'
+oc create secret generic htpass-secret --from-file=htpasswd=users.htpasswd -n openshift-config
+
+cat <<EOF > htpasswd-conf.yml
+apiVersion: config.openshift.io/v1
+kind: OAuth
+metadata:
+  name: cluster
+spec:
+  identityProviders:
+  - name: my_htpasswd_provider 
+    mappingMethod: claim 
+    type: HTPasswd
+    htpasswd:
+      fileData:
+        name: htpass-secret 
+EOF
+
+oc apply -f htpasswd-conf.yml
+oc adm policy add-cluster-role-to-user cluster-admin admin
+
+oc delete secrets kubeadmin -n kube-system
+----
+
+= Logging Deployment
+
+Deploy:
+#TODO#
+
+Set persistent volume:
+#TODO#
+
+Set node selector:
+#TODO#
+
+
+= Monitoring Configuration
+
+Set persistent volume:
+#TODO#
+
+Set node selector:
+#TODO#

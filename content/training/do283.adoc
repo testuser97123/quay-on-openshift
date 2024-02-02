@@ -1,0 +1,36 @@
+= Red Hat Application Development II: Implementing Microservice Architectures (DO283)
+
+*Course description*
+
+Develop microservice-based applications in Java EE with MicroProfile and OpenShift
+
+Building on Red Hat Application Development I: Programming in Java EE (AD183), the introductory course for Java EE application development, Red Hat Application Development II: Implementing Microservice Architectures (DO283) emphasizes learning architectural principles and implementing microservices in Java EE, primarily based on MicroProfile with WildFly Swarm and OpenShift.
+
+This course is based on Wildfly Swarm 2018.3.3.
+
+You will build on Java EE application development fundamentals and focus on how to develop, monitor, test, and deploy modern microservices applications. Many enterprises are looking for a way to take advantage of cloud-native architectures, but many do not know the best way to go about it. These enterprises have monolithic applications written in Java Enterprise Edition (JEE).
+
+*Course summary*
+
+* Deploy and monitor microservice-based applications.
+* Implement a microservice with MicroProfile.
+* Implement unit and integration tests for microservices.
+* Use the config specification to inject data into a microservice.
+* Create a health check for a microservice.
+* Implement fault tolerance in a microservice.
+* Secure a microservice using the JSON Web Token (JWT) specification.
+
+*Audience for this course*
+
+This course is designed for Java developers.
+
+*Prerequisites for this course*
+
+* Attend Introduction to OpenShift Applications (DO101) or demonstrate equivalent experience
+* Attend Red Hat Application Development I: Programming in Java EE (AD183) or demonstrate equivalent experience
+* Be proficient in using an integrated development environment such as Red Hat(R) Developer Studio or Eclipse
+* Experience with Maven is recommended, but not required
+
+
+For full details, or to enroll: +
+https://www.redhat.com/en/services/training/do283-red-hat-application-development-ii-implementing-microservice-architectures

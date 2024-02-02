@@ -1,0 +1,34 @@
+////
+Purpose
+-------
+In the "Base" directory, this section is a placeholder which is to be
+overwritten by architecture specific to the product or products being
+delivered.
+
+If "TODO" appears in your document after the init script has been run, then your product directory is missing a corresponding "architecture.adoc" which should be implemented to provide a basic architecture framework for that product.
+////
+
+Red Hat Quay is made up of several core components.
+
+
+* Database: Used by Red Hat Quay as its primary metadata storage (not for image storage).
+* Redis (key, value store): Stores live builder logs and the Red Hat Quay tutorial.
+* Quay (container registry): Runs the quay container as a service, consisting of several components in the pod.
+* Clair: Scans container images for vulnerabilities and suggests fixes.
+
+
+= Environment Setup
+Steps to prepare or create the environment for the proposed architecture
+
+* Verify the OCP Cluster Version.
+....
+[bastion@HBPASSDRAPP01 quayprod]$ oc get clusterversion
+NAME      VERSION   AVAILABLE   PROGRESSING   SINCE   STATUS
+version   4.12.22   True        False         17d     Cluster version is 4.12.22
+....
+
+* Annotate the image-registry namespace.
+....
+[bastion@HBPASSDRAPP01 quayprod]$ oc annotate namespace image-registry openshift.io/node-selector=node-role.kubernetes.io/infra=
+namespace/image-registry annotated
+....

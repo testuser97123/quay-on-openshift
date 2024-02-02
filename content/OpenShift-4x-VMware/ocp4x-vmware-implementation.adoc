@@ -1,0 +1,160 @@
+= TODO_ENVIRONMENT_NAME
+TODO Environment Description
+
+== Domain Information
+
+Domain: `{ocp_cluster1_base_domain}` +
+Cluster Name: `{ocp_cluster1_name}`
+
+== VMware Information
+The following VMware data has been configured in the OpenShift cluster:
+
+.VMware Data
+[options="header"]
+|===
+|VMware Property | Value
+
+|VCENTER_SERVER
+|vcsa.rhbr-labs.com
+
+|VCENTER_SERVER
+|vcsa.rhbr-labs.com
+
+|VCENTER_USER
+|administrator@vsphere.local
+
+|VCENTER_PASSWORD
+|<hidden>
+
+|VCENTER_DC
+|rhbr-labs-dc
+
+|VCENTER_DS
+|rhbr-labs-ds
+
+|===
+
+== Network Information
+
+.Network Data
+[options="header"]
+|===
+|Name | CIDR Block or Value | Comments
+
+|VNet
+|
+|
+
+|Pod Network
+|/16
+| IP Addresses
+
+|Service Network
+|/16
+| IP Addresses
+
+|Host Subnet Length
+|9
+|This tells OpenShift to allocate a /23 (32-9) of [Pod Network] to every node.
+NOTE: The default installation setting is a subnet of /9. This value must be reduced for smaller CIDR ranges.
+
+|===
+
+== Node Information
+
+.Nodes Data
+[options="header"]
+|===
+|Server FQDN |IP |Role | Subs Used |Labels
+
+|
+|
+|Master
+|N/A
+| #TODO#
+
+|
+|
+|Master
+|N/A
+| #TODO#
+
+|
+|
+|Master
+|N/A
+| #TODO#
+
+|
+|
+|Infra
+|N/A
+| #TODO#
+
+|
+|
+|Infra
+|N/A
+| #TODO#
+
+|
+|
+|Infra
+|N/A
+| #TODO#
+
+|
+|
+|Application
+|1
+| #TODO#
+
+|
+|
+|Application
+|1
+| #TODO#
+
+|
+|
+|Application
+|1
+| #TODO#
+
+|
+|
+|Bastion
+|N/A
+| N/A
+
+|===
+
+
+
+== Storage Information
+
+.Storage Data
+[options="header"]
+|===
+|Application |Storage Type |Backing Storage |Size
+
+|Metrics
+|Block
+|
+|
+
+|Logging
+|Block
+|
+|
+
+|Registry
+|File
+|
+|
+
+|Application
+|File
+|
+|
+|===

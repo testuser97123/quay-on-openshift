@@ -1,0 +1,142 @@
+= Post Deployment Environment Verification Checklist
+
+== Environment TODO_ENV_NAME verification (#TODO#: copy this per cluster)
+
+.Cluster Durability and Recovery
+[cols="85%,15%",options="header"]
+|===
+| *Requirement*  |  *Result* 
+
+| Plan for Node, Rack, or AZ Failure
+| #TODO#
+
+| Plan for Data Center/Region Failure
+| #TODO#
+
+| Master Anti-Affinity/Failure Domains
+| #TODO#
+
+| Infrastructure Anti-Affinity/Failure Domains
+| #TODO#
+
+| Cluster Capacity Planning Completed
+| #TODO#
+
+| Cluster Capacity for Failing Nodes/Racks
+| #TODO#
+
+| Defined SLA for OCP Cluster: Does deployed architecture support planned SLA?
+| #TODO#
+
+a| Documented SLAs for Dependencies. Should cover:
+
+* Underlying Compute, Network, Storage
+* External Load Balancer
+* External Registry
+* Artifact Repositories
+* CICD (ie Jenkins/Tower/etc)
+| #TODO#
+
+a| If MultiCluster Failover:
+
+* Failover Process Documented and Tested
+* Recovery Process Documented and Tested
+| #TODO#
+
+| Etcd Backup Configured
+| #TODO#
+
+| Etcd Restore Documented and Tested
+| #TODO#
+
+a| If Required, Infra Backup Configured and Tested. Should cover:
+
+** Logging ElasticSearch
+** Prometheus Metrics
+| #TODO#
+
+| Disaster Recovery Procedure Documented and Tested
+| #TODO#
+
+|===
+
+.Configuration and Durability
+[cols="85%,15%",options="header"]
+|===
+| *Requirement*  |  *Result* 
+
+| Requests and Limits Defined According to Desired QoS
+| #TODO#
+
+a| Liveness and Readiness Probes Defined and Correct:
+
+* Liveness probe does not test for downstream service health
+| #TODO#
+
+| Connections and requests to downstream services are retried on failure or gracefully handled
+| #TODO#
+
+| Repeated failures by downstream services causes future requests to be short circuited via a circuit breaker
+| #TODO#
+
+a| Application gracefully shuts down on SIGTERM
+
+* Incoming requests are handled during grace period
+* Idle keep-alive sockets are closed
+| #TODO#
+
+| Load Test Completed:
+
+* What is capacity at maximum allowed latency in a single cluster?
+| #TODO#
+
+| Functional Testing Completed
+| #TODO#
+
+| If Required by SLA, Deployments Scaled to Multiple Replicas
+| #TODO#
+
+| Pod Disruption Budget Defined
+| #TODO#
+
+|===
+
+.Security
+[cols="85%,15%",options="header"]
+|===
+| *Requirement*  |  *Result* 
+
+| ResourceQuotas are Defined for All Application Projects
+| #TODO#
+
+| Pods Configured with Most Restrictive Possible SCC
+| #TODO#
+
+| Narrowly Defined NetworkPolicy Exists for all Pods
+| #TODO#
+
+| User Access to Namespaces Audited
+| #TODO#
+
+a| `ovs-networkpolicy` minimumally configured for project isolation.
+See the following for suggested implementation details:
+
+* https://github.com/redhat-cop/openshift-toolkit/tree/master/networkpolicy[redhat-cop/openshift-toolkit/networkpolicy]
+* https://blog.openshift.com/networkpolicies-and-microsegmentation/[Blog - NetworkPolicies and Microsegmentation]
+| #TODO#
+
+|===
+
+.Observability
+[cols="85%,15%",options="header"]
+|===
+| *Requirement*  |  *Result* 
+
+| Application Logs to stdout, Logs Aggregated
+| #TODO#
+
+| If Using Prometheus, ServiceMonitors and Rules Defined
+| #TODO#
+
+|===
+

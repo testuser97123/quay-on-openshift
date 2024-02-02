@@ -1,0 +1,11 @@
+= Pre Deployment Environment Verification Checklist
+
+Prior to or as part of the engagement the "Openshift Container Platform (OCP) 4 Prerequisite Checklist" document
+was delivered.
+
+As part of the engagement that checklist was filled out per deployed environment. Those external documents
+can be referenced here:
+* TODO_environment_1_name - TODO_link_or_describe_location_of_completed_checklist_for_environment_1
+* TODO_environment_2_name - TODO_link_or_describe_location_of_completed_checklist_for_environment_2
+
+It is recommended for any future OpenShift 4.x clusters that are created that the same check list be followed.

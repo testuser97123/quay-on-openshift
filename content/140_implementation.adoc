@@ -1,0 +1,458 @@
+////
+Purpose
+-------
+In the "Base" directory, this section is a placeholder which is to be
+overwritten by implementation details specific to the product or products being
+delivered.
+
+If "TODO" appears in your document after the init script has been run, then
+your product directory is missing a corresponding "implementation.adoc" which
+should be created to provide a basic implementation framework for that product.
+////
+
+
+= Configuring Red Hat Quay 
+
+== Installing quay operator
+....
+Using the OpenShift console, Select Operators → OperatorHub, then select the Quay Operator. If there is more than one, be sure to use the Red Hat certified Operator and not the community version.
+
+Select Install. The Operator Subscription page appears.
+
+Choose the following then select Subscribe:
+
+Installation Mode: Choose either 'All namespaces' or 'A specific namespace' depending on whether you want the Operator to be available cluster-wide or only within a single namespace (all-namespaces recommended)
+
+Update Channel: Choose the update channel (only one may be available)
+
+Approval Strategy: Choose to approve automatic or manual updates
+
+Select Install.
+
+After a minute you will see the Operator installed successfully in the Installed Operators page.
+....
+image::quay-operator1.png[pdfwidth=99%,width=99%]
+image::quay-operator2.png[pdfwidth=99%,width=99%]
+
+* Validating the Quay Operator.
+
+image::quay-operator3.png[pdfwidth=99%,width=99%]
+
+== Creating Quay Registry Configuration and Resource.
+* Create the config file for quay.
+
+image::quay-operator4.png[pdfwidth=99%,width=99%]
+
+* Create a secret using above config.yaml.
+....
+[bastion@HBPASSDRAPP01 quayprod]$ oc create secret generic --from-file config.yaml=./config.yaml quay-config-bundle
+secret/quay-config-bundle created
+....
+
+* Create quay registry resource manifest.
+
+image::quay-operator5.png[pdfwidth=99%,width=99%]
+
+* Validating the quay resgitry resource.
+....
+[op_3879@JPROCPDRBST01 QuayDeployment]$ oc get quayregistry
+NAME                           AGE
+quay-prod-registry             2d21h
+....
+
+* Validate the route configuration
+
+image::quay-operator6.png[pdfwidth=99%,width=99%]
+
+= Login to the quay config editor https://quay-prod-registry-test-route-quayregistry.apps.hbnpprs2ocp1.hbctxdom.com
+* Username and password for quay config editor will be available in the sceret for quay config editor. Setup LDAP and Email Notification.
+
+image::quay-operator7.png[pdfwidth=99%,width=99%]
+
+.Storage Replication
+image::storagereplication.png[pdfwidth=99%,width=99%]
+
+.Setup LDAP 
+image::config_editor_2.png[pdfwidth=99%,width=99%]
+
+image::config_editor_3.png[pdfwidth=99%,width=99%]
+
+* Validate the changes and reconfiure quay so as to apply the changes to the operator.
+
+.Validate and Reconfigure
+image::config_editor_4.png[pdfwidth=99%,width=99%]
+
+* Verify the pods
+
+.pod list
+image::config_editor_6.png[pdfwidth=99%,width=99%]
+
+= Red Hat Quay Post Deployment Validation
+
+* Login to the quay connsole https://enterprisequaydr.hbctxdom.com with LDAP credentials.
+
+.Quay Registry Login Page
+image::quay-operator6.png[pdfwidth=99%,width=99%]
+
+* Push the Image into *enterprisequaydr.hbctxdom.com/test-org/test* Repository by using Podman CLI
+
+** Login into 'enterprisequaydr.hbctxdom.com' Quay Registry
+
+```bash
+podman login enterprisequaydr.hbctxdom.com
+Username: robocadmn
+Password: XXXXXXXXXXXXXXXXX
+Login Succeeded!
+```
+
+** Pull the Quay Image from redhat registry
+
+```bash
+[bastion@HBPASSDRAPP01 quayprod]$ podman pull registry.redhat.io/openjdk/openjdk-11-rhel7
+Trying to pull registry.redhat.io/openjdk/openjdk-11-rhel7:latest...
+Getting image source signatures
+Copying blob fde28b70fde8 done
+Copying blob aaa4ff011883 done
+Copying blob 71104d043b69 done
+Copying config 3cd3e03adf done
+Writing manifest to image destination
+Storing signatures
+3cd3e03adfc7cdb7cd02f6024fd4fef1cd1a51e29981ad409e5d4b201fe2d9b2
+```
+
+```bash
+[bastion@HBPASSDRAPP01 quayprod]$ podman images
+REPOSITORY                                   TAG         IMAGE ID      CREATED      SIZE
+registry.redhat.io/openjdk/openjdk-11-rhel7  latest      3cd3e03adfc7  5 weeks ago  554 MB
+```
+
+** Tag the 'Quay' Image into 'enterprisequaydr.hbctxdom.com/test-org/test:v1'
+
+```bash
+ [bastion@HBPASSDRAPP01 quayprod]$ podman tag registry.redhat.io/openjdk/openjdk-11-rhel7 enterprisequaydr.hbctxdom.com/test-org/test:v1
+```
+
+```bash
+[bastion@HBPASSDRAPP01 quayprod]$ podman images
+REPOSITORY                                                         TAG         IMAGE ID      CREATED      SIZE
+registry.redhat.io/openjdk/openjdk-11-rhel7                        latest      3cd3e03adfc7  5 weeks ago  554 MB
+enterprisequaydr.hbctxdom.com/test-org/test                        v1          3cd3e03adfc7  5 weeks ago  554 MB
+```
+
+** Push the enterprisequaydr.hbctxdom.com/test-org/test:v1 Image Tag into Quay Registry
+
+```bash
+[bastion@HBPASSDRAPP01 quayprod]$ podman push enterprisequaydr.hbctxdom.com/test-org/test:v1  --remove-signatures
+Copying blob 66f75fbc6cda done
+Copying blob 8d20019b0742 done
+Copying blob b39771317774 done
+Copying config 3cd3e03adf done
+Writing manifest to image destination
+Storing signatures
+```
+
+* Pull the Image from 'enterprisequaydr.hbctxdom.com/test-org/test:v1' Repository by using Podmap CLI
+
+```bash
+[bastion@HBPASSDRAPP01 quayprod]$ podman images
+REPOSITORY                                   TAG         IMAGE ID      CREATED      SIZE
+registry.redhat.io/openjdk/openjdk-11-rhel7  latest      3cd3e03adfc7  5 weeks ago  554 MB
+```
+
+```bash
+"Login into Quay Registry"
+
+podman login enterprisequaydr.hbctxdom.com 
+
+Username: robocadmn
+Password: XXXXXXXXXXXXXXXXX
+Login Succeeded!
+```
+
+
+```bash
+[bastion@HBPASSDRAPP01 quayprod]$ podman pull enterprisequaydr.hbctxdom.com/test-org/test:v1
+Trying to pull enterprisequaydr.hbctxdom.com/test-org/test:v1...
+Getting image source signatures
+Copying blob ae6119e6b94b skipped: already exists
+Copying blob 3788454ea6bd skipped: already exists
+Copying blob 44223894ab1b skipped: already exists
+Copying config 3cd3e03adf done
+Writing manifest to image destination
+Storing signatures
+3cd3e03adfc7cdb7cd02f6024fd4fef1cd1a51e29981ad409e5d4b201fe2d9b2
+
+```
+
+```bash
+"Verify that, the Image has pull successfully into System"
+
+[bastion@HBPASSDRAPP01 quayprod]$ podman images
+REPOSITORY                                                         TAG         IMAGE ID      CREATED      SIZE
+enterprisequaydr.hbctxdom.com/test-org/test                        v1          3cd3e03adfc7  5 weeks ago  554 MB
+registry.redhat.io/openjdk/openjdk-11-rhel7                        latest      3cd3e03adfc7  5 weeks ago  554 MB
+```
+
+= Enable Email Notifications for a Repository
+
+* Select the repository > Click on settings Icon > Click on Create Notification Button
+
+image::email-notification.PNG[pdfwidth=99%,width=99%]
+
+* Select the Notification Type from the Drop Down Menu
+
+image::email-notification1.PNG[pdfwidth=99%,width=99%]
+
+* Select the Notification Method (E-mail) from the Drop Down Menu
+
+image::email-notification2.PNG[pdfwidth=99%,width=99%]
+
+* Provide the Recipient E-mail Address and Notification Title and Click on Create Notification Button
+
+* Click on Send Authorization E-mail Button to receive notification from Quay Registry.
+
+*  Please check your Mail Box, you should have received an E-mail from Quay Registry. Click on it to confirm and Authorize to receive an E-mails from Quay Registry.
+
+[NOTE]
+====
+**Follow the same steps to configure Notification for other Quay repositories**
+====
+
+= Migrating a standalone Quay deployment to a Red Hat Quay Operator managed deployment
+
+The following procedures allow you to back up a standalone Red Hat Quay deployment and migrate it to the Red Hat Quay Operator on OpenShift Container Platform.
+
+== Backing up a standalone deployment of Red Hat Quay
+
+* Back up the Quay config.yaml of your standalone deployment:
+
+....
+$ mkdir /tmp/quay-backup
+$ cp /path/to/Quay/config/directory/config.yaml /tmp/quay-backup
+....
+
+* Create a backup of the database that your standalone Quay deployment is using:
+
+....
+$ pg_dump -h DB_HOST -p 5432 -d QUAY_DATABASE_NAME -U QUAY_DATABASE_USER -W -O > /tmp/quay-backup/quay-database-backup.sql
+....
+
+* Install the AWS CLI if you do not have it already.
+
+* Create an ~/.aws/ directory:
+
+....
+$ mkdir ~/.aws/
+....
+
+* Obtain the access_key and secret_key from the Quay config.yaml of your standalone deployment:
+
+....
+$ grep -i DISTRIBUTED_STORAGE_CONFIG -A10 /tmp/quay-backup/config.yaml
+Example output:
+
+DISTRIBUTED_STORAGE_CONFIG:
+    minio-1:
+        - RadosGWStorage
+        - access_key: ##########
+          bucket_name: quay
+          hostname: 172.xx.xx.xx
+          is_secure: false
+          port: "xxxx"
+          secret_key: ##########
+          storage_path: /datastorage/registry
+....
+
+* Store the access_key and secret_key from the Quay config.yaml file in your ~/.aws directory:
+
+....
+$ touch ~/.aws/credentials
+....
+
+* In your quay-backup directory, create a bucket_backup directory:
+
+....
+$ mkdir /tmp/quay-backup/bucket-
+....
+
+* Backup all blobs from the S3 storage:
+
+....
+$ aws s3 sync --no-verify-ssl --endpoint-url https://PUBLIC_S3_ENDPOINT:PORT s3://QUAY_BUCKET/ /tmp/quay-backup/bucket-backup/
+....
+
+Up to this point, you should have a complete backup of all Quay data, blobs, the database, and the config.yaml file stored locally. In the following section, you will migrate the standalone deployment backup to Red Hat Quay on OpenShift Container Platform.
+
+
+== Using backed up standalone content to migrate to OpenShift Container Platform
+
+* Scale down the Red Hat Quay Operator:
+
+....
+$ oc scale --replicas=0 deployment quay-operator.v3.6.2 -n openshift-operators
+....
+
+* Scale down the application and mirror deployments:
+
+....
+$ oc scale --replicas=0 deployment QUAY_MAIN_APP_DEPLOYMENT QUAY_MIRROR_DEPLOYMENT
+....
+
+* Copy the database SQL backup to the Quay PostgreSQL database instance:
+
+....
+$ oc cp /tmp/user/quay-backup/quay-database-backup.sql quay-enterprise/quayregistry-quay-database-54956cdd54-p7b2w:/var/lib/pgsql/data/userdata
+....
+
+* Obtain the database password from the Operator-created config.yaml file:
+
+....
+$ oc get deployment quay-quay-app -o json | jq '.spec.template.spec.volumes[].projected.sources' | grep -i config-secret
+Example output:
+
+      "name": "QUAY_CONFIG_SECRET_NAME"
+....
+
+....
+$ oc get secret quay-quay-config-secret-9t77hb84tb -o json | jq '.data."config.yaml"' | cut -d '"' -f2 | base64 -d -w0 > /tmp/quay-backup/operator-quay-config-yaml-backup.yaml
+....
+
+* cat /tmp/quay-backup/operator-quay-config-yaml-backup.yaml | grep -i DB_URI
+
+....
+Example output:
+
+postgresql://QUAY_DATABASE_OWNER:PASSWORD@DATABASE_HOST/QUAY_DATABASE_NAME
+....
+
+* Execute a shell inside of the database pod:
+
+....
+# oc exec -it quay-postgresql-database-pod -- /bin/bash
+Enter psql:
+
+bash-4.4$ psql
+Drop the database:
+
+postgres=# DROP DATABASE "example-restore-registry-quay-database";
+Example output:
+
+DROP DATABASE
+....
+
+* Create a new database and set the owner as the same name:
+
+....
+postgres=# CREATE DATABASE "example-restore-registry-quay-database" OWNER "example-restore-registry-quay-database";
+Example output:
+
+CREATE DATABASE
+....
+
+* Connect to the database:
+
+....
+postgres=# \c "example-restore-registry-quay-database";
+Example output:
+
+You are now connected to database "example-restore-registry-quay-database" as user "postgres".
+....
+
+* Create a pg_trmg extension of your Quay database:
+
+....
+example-restore-registry-quay-database=# create extension pg_trgm ;
+Example output:
+
+CREATE EXTENSION
+....
+
+* Exit the postgres CLI to re-enter bash-4.4:
+
+....
+\q
+....
+
+* Set the password for your PostgreSQL deployment:
+
+....
+bash-4.4$ psql -h localhost -d "QUAY_DATABASE_NAME" -U QUAY_DATABASE_OWNER -W < /var/lib/pgsql/data/userdata/quay-database-backup.sql
+Example output:
+
+SET
+SET
+SET
+SET
+SET
+....
+
+* Exit bash mode:
+....
+bash-4.4$ exit
+....
+
+* Create a new configuration bundle for the Red Hat Quay Operator.
+
+....
+$ touch config-bundle.yaml
+....
+
+* In your new config-bundle.yaml, include all of the information that the registry requires, such as LDAP configuration, keys, and other modifications that your old registry had. Run the following command to move the secret_key to your config-bundle.yaml:
+
+....
+$ cat /tmp/quay-backup/config.yaml | grep SECRET_KEY > /tmp/quay-backup/config-bundle.yaml
+....
+
+* Create a configuration bundle secret inside of your OpenShift cluster:
+
+....
+$ oc create secret generic new-custom-config-bundle --from-file=config.yaml=/tmp/quay-backup/config-bundle.yaml
+....
+
+* Scale up the Quay pods:
+
+....
+$ oc scale --replicas=1 deployment quayregistry-quay-app
+deployment.apps/quayregistry-quay-app scaled
+....
+
+* Scale up the mirror pods:
+....
+$ oc scale --replicas=1  deployment quayregistry-quay-mirror
+deployment.apps/quayregistry-quay-mirror scaled
+....
+
+* Patch the QuayRegistry CRD so that it contains the reference to the new custom configuration bundle:
+
+....
+$ oc patch quayregistry QUAY_REGISTRY_NAME --type=merge -p '{"spec":{"configBundleSecret":"new-custom-config-bundle"}}'
+Note
+If Quay returns a 500 internal server error, you might have to update the location of your DISTRIBUTED_STORAGE_CONFIG to default.
+....
+
+* Create a new AWS credentials.yaml in your /.aws/ directory and include the access_key and secret_key from the Operator-created config.yaml file:
+
+....
+$ touch credentials.yaml
+$ grep -i DISTRIBUTED_STORAGE_CONFIG -A10 /tmp/quay-backup/operator-quay-config-yaml-backup.yaml
+$ cat > ~/.aws/credentials << EOF
+[default]
+aws_access_key_id = ACCESS_KEY_FROM_QUAY_CONFIG
+aws_secret_access_key = SECRET_KEY_FROM_QUAY_CONFIG
+EOF
+....
+
+* Sync the backup data to the NetApp Trident backend storage:
+
+....
+$ aws s3 sync --no-verify-ssl --endpoint-url https://PUBLIC_S3_ROUTE /tmp/quay-backup/bucket-backup/* s3://QUAY_DATASTORE_BUCKET_NAME
+....
+
+* Scale the Operator back up to 1 pod:
+....
+$ oc scale –replicas=1 deployment quay-operator.v3.8.11 -n openshift-operators
+....
+
+The Operator will use the custom configuration bundle provided and will reconcile all secrets and deployments. Your new Quay deployment on OpenShift Container Platform should contain all of the information that the old deployment had. All images should be pull-able.
+
+

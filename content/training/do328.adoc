@@ -1,0 +1,33 @@
+= Building Resilient Microservices with Istio and Red Hat OpenShift Service Mesh | DO328
+
+*Course description*
+
+Control, manage, trace, monitor, and test your microservices with Red Hat OpenShift Service Mesh
+
+Building Resilient Microservices with Istio and Red Hat OpenShift Service Mesh (DO328) teaches students installation, service monitoring, service management, and service resilience of Red Hat OpenShift(R) Service Mesh. 
+
+Openshift created an enterprise-ready, multi-tenant platform that made deploying and scaling microservice applications efficient and easily repeatable. But as these architectures become larger and more complex, defining how these services interact with each other becomes increasingly difficult. Red Hat OpenShift Service Mesh comprises 3 products—Istio, Jaeger, and Kiali—that facilitate service interaction management, provide service tracing, and create a visual representation of communication pathways.
+
+This course is based on Red Hat OpenShift(R) Container Platform 4.4 and Red Hat OpenShift Service Mesh 1.1.
+
+*Course content summary*
+
+* Install Red Hat OpenShift Service Mesh on an OpenShift cluster.
+* Apply release strategies by controlling service traffic.
+* Build service resilience with load balancing and failovers.
+* Test service resilience with chaos testing.
+* Enforce service security.
+* Observe, measure, and trace network traffic with OpenShift Service Mesh.
+
+*Audience for this course*
+
+This course is designed for developers who want to deploy and scale microservices applications.
+
+*Prerequisites for this course*
+
+* Attending Red Hat Certified Specialist in Cloud Infrastructure exam (DO283) or demonstrating equivalent experience in creating microservice applications is recommended, but not required
+* Attending Red Hat OpenShift I: Containers & Kubernetes (DO180) and Red Hat OpenShift Development II: Containerizing Applications (DO288), and passing the Red Hat Certified Specialist in OpenShift Application Development exam (EX288), or possessing basic OpenShift experience, is strongly recommended
+
+
+For full details, or to enroll: +
+https://www.redhat.com/en/services/training/do328-building-resilient-microservices-with-istio-and-red-hat-openshift-service-mesh

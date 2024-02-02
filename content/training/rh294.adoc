@@ -1,0 +1,36 @@
+= Red Hat Linux Automation with Ansible (RH294)
+
+*Course description*
+
+Learn how to automate Linux system administration tasks with Ansible
+
+Red Hat Enterprise Linux Automation with Ansible (RH294) teaches the skills needed to manage large numbers of systems and applications efficiently and consistently. You will learn the techniques needed to use Ansible(R) to automate provisioning, configuration, application deployment, and orchestration.
+
+This course is based on Red Hat(R) Enterprise Linux(R) 8 and Red Hat Ansible Engine 2.8.
+
+*Course content summary*
+
+* Install Ansible / Red Hat Ansible Engine on control nodes.
+* Create and update inventories of managed hosts and manage connections to them.
+* Automate administration tasks with Ansible Playbooks and ad hoc commands.
+* Write effective playbooks at scale.
+* Protect sensitive data used by Ansible with Ansible Vault.
+* Reuse code and simplify playbook development with Ansible roles.
+
+*Audience for this course*
+
+This course is geared toward Linux system administrators, DevOps engineers, infrastructure automation engineers, and systems design engineers who are responsible for these tasks:
+
+* Automating configuration management
+* Ensuring consistent and repeatable application deployment
+* Provisioning and deployment of development, testing, and production servers
+* Integrating with DevOps continuous integration/continuous delivery workflows
+
+*Prerequisites for this course*
+
+* Pass the Red Hat Certified System Administrator (RHCSA) exam (EX200), or demonstrate equivalent Red Hat Enterprise Linux knowledge and experience
+* Take our free assessment to gauge whether this offering is the best fit for your skills.
+
+
+For full details, or to enroll: +
+https://www.redhat.com/en/services/training/rh294-red-hat-linux-automation-with-ansible

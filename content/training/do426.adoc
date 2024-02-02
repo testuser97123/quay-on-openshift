@@ -1,0 +1,40 @@
+= Red Hat Security: Securing Containers and OpenShift with exam (DO426)
+
+*Course description*
+Learn to mitigate and manage threats to OpenShift container-based infrastructure
+Red Hat Security: Securing Containers and OpenShift with exam (DO426) helps infrastructure administrators and security professionals learn and validate how to identity and mitigate threats to OpenShift container-based infrastructure. The curriculum also covers how to implement and manage secure architecture, policies, and procedures for modern containerized applications and software-defined networking.
+This course is based on Red Hat(R) Enterprise Linux(R) 7.5, Red Hat(R) OpenShift(R) Container Platform 3.11, and Red Hat(R) Identity Manager 7.5. The offering also includes Red Hat Certified Specialist in Security: Containers and OpenShift Container Platform exam (EX425). 
+
+You will learn and validate your skills in using secure and trusted container images, registries, and source code; managing network and storage isolation; implementing application single sign-on; and configuring appropriate security constraints and service role–based access control. You will also find out how existing core Linux technologies—such as namespaces, cgroups, seccomp, capabilities, and SELinux—provide a robust and mature host environment with strongly secure containers.
+
+*Course content summary*
+
+* Learn Linux multitenancy isolation and least-privilege technologies.
+* Investigate trusted repositories, as well as signing and scanning images.
+* Implement security in a continuous integration and continuous development (CI/CD) pipeline.
+* Integrate web application single sign-on.
+* Automate policy-based deployments.
+* Configure security context constraints (SCC).
+* Manage API access control.
+* Provide secure network I/O.
+* Deliver secure storage I/O.
+
+*Audience for this course*
+
+This course is designed for professionals responsible for designing, implementing, maintaining, and managing the security of containerized applications on Red Hat Enterprise Linux systems and in Red Hat OpenShift Container Platform installations, including these roles:
+
+* System administrators
+* IT security administrators
+* IT security engineers
+* DevOps engineers
+* Cloud developers
+* Cloud architects
+
+*Prerequisites for this course*
+
+* Become a Red Hat Certified Engineer (RHCE(R)), or demonstrate equivalent Red Hat Enterprise Linux knowledge and experience
+* Become a Red Hat Certified Specialist in OpenShift Administration, or demonstrate equivalent Red Hat OpenShift Container Platform knowledge and experience
+
+
+For full details, or to enroll: +
+https://www.redhat.com/en/services/training/do426-red-hat-security-securing-containers-and-openshift-exam

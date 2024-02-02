@@ -1,0 +1,38 @@
+= Red Hat OpenStack Administration III: Distributed Architecture and Scaling For Edge Computing (CL310)
+
+*Course description*
+
+Manage Red Hat OpenStack networking for performance tuning
+
+Red Hat OpenStack Administration III: Distributed Architecture and Scaling For Edge Computing (CL310) teaches network engineers, network operators, cloud operators, and cloud administrators how to manage and tune Red Hat(R) OpenStack Platform for network performance.
+
+This course can also help you prepare for the Red Hat Certified Specialist in Edge Computing and Networking exam (EX310).
+
+This offering is based on Red Hat OpenStack version 10.0 and Red Hat Enterprise Linux 7.4.
+
+*Course summary*
+
+You will learn how to manage the OpenStack networking service (Neutron) with network functions virtualization to enhance network performance. You will configure distributed virtual routers, Open vSwitch with Data Plane Development Kit datapath, and IPv6 networking in OpenStack. You will also deploy software-defined networking with OpenDaylight.
+
+* Network functions virtualization (NFV)
+* Distributed virtual router (DVR)
+* Open vSwitch with Data Plane Development Kit (OVS-DPDK) datapath
+* IPv6 networking
+* Single-root I/O Virtualization (SR-IOV)*
+* Software-defined networking (SDN) with OpenDaylight (ODL)
+* VLAN, VXLAN, and GRE networks
+
+*SR-IOV is covered in the course as a lecture and a video. The specification is not covered as a hands-on exercise because it requires special hardware.
+
+*Audience for this course*
+
+This course is designed for network engineers, network operators, cloud administrators, and cloud operators.
+
+*Prerequisites for this course*
+
+* Become a Red Hat(R) Certified System Administrator (RHCSA), or demonstrate equivalent experience
+* Complete the Red Hat OpenStack Administration II: Day 2 Operations for Cloud Operators (EX210), or demonstrate equivalent experience
+
+
+For full details, or to enroll: +
+https://www.redhat.com/en/services/training/cl310-red-hat-openstack-administration-iii-networking-foundations-nfv

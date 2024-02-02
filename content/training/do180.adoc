@@ -1,0 +1,36 @@
+= Red Hat OpenShift I: Containers & Kubernetes (DO180)
+
+*Course description*
+
+Learn to build and manage containers for deployment on a Kubernetes and Red Hat OpenShift cluster
+
+Red Hat OpenShift I: Containers & Kubernetes (DO180) helps you build core knowledge in managing containers through hands-on experience with containers, Kubernetes, and the Red Hat(R) OpenShift(R) Container Platform. These skills are needed for multiple roles, including developers, administrators, and site reliability engineers.
+
+This course is based on Red Hat OpenShift Container Platform 4.5.
+
+*Course content summary*
+
+* Understand container and OpenShift architecture.
+* Create containerized services.
+* Manage containers and container images.
+* Create custom container images.
+* Deploy containerized applications on Red Hat OpenShift.
+* Deploy multi-container applications.
+
+*Audience for this course*
+
+* Developers who wish to containerize software applications
+* Administrators who are new to container technology and container orchestration
+* Architects who are considering using container technologies in software architectures
+* Site reliability engineers who are considering using Kubernetes and Red Hat OpenShift
+
+*Prerequisites for this course*
+
+* Be able to use a Linux terminal session, issue operating system commands, and be familiar with shell scripting
+* Have experience with web application architectures and their corresponding technologies
+* Being a Red Hat Certified System Administrator (RHCSA(R)) is recommended, but not required
+* Take our free assessment to gauge whether this offering is the best fit for your skills.
+
+
+For full details, or to enroll: +
+https://www.redhat.com/en/services/training/do180-red-hat-openshift-I-containers-kubernetes

@@ -1,0 +1,21 @@
+= Quay app pod giving X509: Certificate signed by unknown athourity error while connecting to Hitachi Storage
+
+== Challenge
+Quay was not getting up.
+
+== Immediate Resolution
+Dowloaded the CA of Hitachi Storage from the browser (certificate was in DER format as it was a windows machine), converted into PEM format (openssl x509 -inform DER -in certificate.cer -out certificate.crt) and uploaded under Custom SSL certificate section.
+
+= Error "required component `route` marked as unmanaged, but `configBundleSecret` is missing necessary fields"
+
+== Challange 
+Quay was not getting up
+
+== Immediate Resolution
+Added following parameter by editing the config.yaml file:
+
+....
+SERVER_HOSTNAME: quay-registry.apps.ocpcorpprod.icicibankltd.com
+PREFERRED_URL_SCHEME: https
+EXTERNAL_TLS_TERMINATION: false
+....

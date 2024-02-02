@@ -1,0 +1,18 @@
+= Red Hat Enterprise Linux for SAP Solutions (RH259)
+
+*Course description*
+Deploy and combine the power of SAP applications
+Red Hat Enterprise Linux for SAP Solutions (RH259) is designed to teach Linux(R) administrators how to adapt Red Hat(R) Enterprise Linux for the installation and operation of the in-memory database SAP HANA. This course discusses the system architecture with a focus on performance tuning and troubleshooting in order to meet the requirements of SAP.
+This course is based on Red Hat Enterprise Linux 7.4. 
+
+*Audience for this course*
+
+This course is designed for system administrators who manage SAP environments on Red Hat Enterprise Linux and are interested in learning how to get the storage and network performance required.
+
+*Prerequisites for this course*
+
+* Be a Red Hat Certified System Administrator (RHCSA), or demonstrate equivalent experience
+
+
+For full details, or to enroll: +
+https://www.redhat.com/en/services/training/rh259-red-hat-enterprise-linux-sap-solutions

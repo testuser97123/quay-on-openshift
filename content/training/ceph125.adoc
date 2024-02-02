@@ -1,0 +1,32 @@
+= Red Hat Ceph Storage Architecture and Administration (CEPH125)
+
+*Course description*
+
+Learn how to deploy, manage, and scale out a Ceph storage cluster
+
+Red Hat Ceph 3 Storage Architecture and Administration (CEPH125) helps you provide unified storage for enterprise servers and Red Hat(R) OpenStack Platform with Red Hat Ceph Storage. Learn to use a Ceph storage cluster to provide servers and cloud resources with object storage compatible with the Amazon S3 or OpenStack Swift APIs, Ceph-native or iSCSI-based block storage, and file storage using CephFS.
+
+This course is based on Red Hat Ceph Storage 3.0, Red Hat Enterprise Linux 7.4/7.5, and Red Hat OpenStack Platform 10.0. 
+
+*Course content summary*
+
+Red Hat Ceph Storage Architecture and Administration (CEPH125) is designed for storage administrators or cloud operators who intend to deploy Red Hat Ceph Storage to their production data center environment or OpenStack installation. 
+
+* Deploying and managing a Red Hat Ceph Storage cluster on commodity servers using Ansible.
+* Creating, expanding, and controlling access to storage pools provided by the Ceph cluster.
+* Accessing Red Hat Ceph Storage from clients using object, block, and file-based methods.
+* Analyzing and tuning Red Hat Ceph Storage performance.
+* Integrating OpenStack image, object, block, and file storage with a Red Hat Ceph Storage cluster.
+
+*Audience for this course*
+
+This course is intended for storage administrators, cloud operators, and cloud developers who want to learn how to deploy and manage Red Hat Ceph Storage for use by servers in an enterprise data center or within a Red Hat OpenStack Platform environment.
+
+*Prerequisites for this course*
+
+* Be certified as a Red Hat Certified System Administrator (RHCSA), or demonstrate equivalent experience
+* Some experience with storage administration is recommended, but not required
+
+
+For full details, or to enroll: +
+https://www.redhat.com/en/services/training/ceph125-red-hat-ceph-storage-architecture-and-administration

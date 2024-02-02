@@ -1,0 +1,18 @@
+= Deployment Procedure on VMware vSphere Documentation
+This section contains the steps that were performed to deploy and configure the OpenShift cluster on VMware for the customer {customer}. The steps mentioned in this section are based on the following procedures from the official documentation:
+
+* https://access.redhat.com/documentation/en-us/openshift_container_platform/{ocp_version}/html/installing_on_vsphere/installing-on-vsphere[Installing a cluster on vSphere]
+* https://access.redhat.com/documentation/en-us/openshift_container_platform/{ocp_version}/html/authentication/index[Configuring user authentication, encryption, and access controls for users and services]
+* https://access.redhat.com/documentation/en-us/openshift_container_platform/{ocp_version}/html/networking/configuring-ingress[Ingress operator in OpenShift Container Platform]
+* https://access.redhat.com/documentation/en-us/openshift_container_platform/{ocp_version}/html/registry/index[Configuring registries for OpenShift Container Platform]
+* https://access.redhat.com/documentation/en-us/openshift_container_platform/{ocp_version}/html/logging/index[Configuring cluster logging in OpenShift Container Platform]
+* https://access.redhat.com/documentation/en-us/openshift_container_platform/{ocp_version}/html/monitoring/index[Configuring and using the monitoring stack in OpenShift Container Platform]
+
+== Prerequisites Preparation
+include::ocp4x-vmware-appendix-pre-reqs.adoc[leveloffset=+2]
+
+== Deploying OpenShift on VMware using User Provisioned Infrastructure (UPI)
+include::ocp4x-vmware-appendix-vsphere-deploy.adoc[leveloffset=+2]
+
+== Post Deployment Configurations
+include::ocp4x-vmware-appendix-post-deployment.adoc[leveloffset=+2]
